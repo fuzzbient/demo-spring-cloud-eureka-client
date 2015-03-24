@@ -1,0 +1,69 @@
+buildscript {
+    ext {
+        springBootVersion = '1.2.2.RELEASE'
+		springCloudVersion = '1.0.0.RELEASE'
+		eurekaVersion = '1.1.147'
+    }
+    repositories {
+        mavenCentral()
+		maven { url "http://repo.spring.io/libs-release" }
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://repo.spring.io/plugins-snapshot" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("io.spring.gradle:dependency-management-plugin:0.4.0.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+	imports {
+		mavenBom 'org.springframework.cloud:spring-cloud-starter-parent:1.0.0.RELEASE'
+	}
+}
+
+springBoot {
+	requiresUnpack = ['com.netflix.eureka:eureka-core','com.netflix.eureka:eureka-client']
+}
+
+jar {
+    baseName = 'demo-spring-cloud-eureka-client'
+    version = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+
+dependencies {
+	compile("org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}")
+	compile("org.springframework.boot:spring-boot-starter:${springBootVersion}")
+	compile("org.springframework.cloud:spring-cloud-starter:${springCloudVersion}")
+	compile("org.springframework.cloud:spring-cloud-starter-eureka:${springCloudVersion}")
+	compile("org.springframework.cloud:spring-cloud-starter-eureka-server:${springCloudVersion}")
+	compile("org.springframework.cloud:spring-cloud-starter-hystrix-dashboard:${springCloudVersion}")
+    compile("org.springframework.cloud:spring-cloud-starter-hystrix:${springCloudVersion}")
+	compile("org.springframework.cloud:spring-cloud-starter-ribbon:${springCloudVersion}")
+	compile("org.springframework.cloud:spring-cloud-starter-feign:${springCloudVersion}")
+	testCompile("org.springframework.boot:spring-boot-starter-test") 
+}
+
+eclipse {
+    classpath {
+         containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+         containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
